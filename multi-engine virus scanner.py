@@ -1,6 +1,7 @@
 import hashlib
 import requests
 
+#Converts the file to SHA256
 def sha256_file(file_path):
     sha256_hash = hashlib.sha256()
     with open(file_path, "rb") as f:
@@ -15,6 +16,7 @@ sha = sha256_file(file_path)
 url = "https://www.virustotal.com/api/v3/files"
 url2 = "https://www.virustotal.com/api/v3/files/" + sha
 
+#Uploads the file to the API for scanning
 files = {"file": (file_path, open(file_path, "rb"), "application/octet-stream")}
 headers = {
     "accept": "application/json",
@@ -23,15 +25,17 @@ headers = {
 responserequest = requests.post(url, files=files, headers=headers)
 
 print("SHA256 of the file:" + sha256_file(file_path))
+
+#Retrieves the analysis from the API
 response = requests.get(url2, headers=headers)
 if response.status_code == 200:
     json_response = response.json()
     
-    # Extracting relevant information
+    #Extracting relevant information
     attributes = json_response.get('data', {}).get('attributes', {})
     stats = attributes.get('last_analysis_stats', {})
 
-    # Extract values with defaults
+    #Extract values with defaults
     analysis_id = json_response.get('data', {}).get('id', 'Not Available')
     scan_date = attributes.get('date', 'Not Available')
     scan_results = attributes.get('last_analysis_results', {})
@@ -45,7 +49,7 @@ if response.status_code == 200:
     unsupported = stats.get('type-unsupported', 0)
     names = [attributes.get('names', 'Not Available')]
 
-    # Calculate total engines
+    #Calculate total engines
     total_engines = sum([malicious, harmless, suspicious, undetected, timeout, confirmedtimeout, failure, unsupported])
 
 
