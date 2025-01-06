@@ -9,8 +9,8 @@ def sha256_file(file_path):
             sha256_hash.update(byte_block)
     return sha256_hash.hexdigest()
 
-# Example usage
-file_path = r"c:\Users\koala\Desktop\Terraria.url"
+#Example usage
+file_path = r"{filepath}"
 sha = sha256_file(file_path)
 url = "https://www.virustotal.com/api/v3/files"
 url2 = "https://www.virustotal.com/api/v3/files/" + sha
@@ -18,7 +18,7 @@ url2 = "https://www.virustotal.com/api/v3/files/" + sha
 files = {"file": (file_path, open(file_path, "rb"), "application/octet-stream")}
 headers = {
     "accept": "application/json",
-    "x-apikey": "acf09e97046fd748b4cdc5a9cd2a53d6da2ca56d57eb8602f9e0374146ad78a3"
+    "x-apikey": "{insert own API}"
 }
 responserequest = requests.post(url, files=files, headers=headers)
 
