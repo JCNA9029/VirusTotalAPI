@@ -23,8 +23,10 @@ headers = {
     "x-apikey": "{insert own API}"
 }
 responserequest = requests.post(url, files=files, headers=headers)
-
 print("SHA256 of the file:" + sha256_file(file_path))
+
+#Giving time for the API to analyze the application
+time.sleep(3)
 
 #Retrieves the analysis from the API
 response = requests.get(url2, headers=headers)
