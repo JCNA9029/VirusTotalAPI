@@ -1,6 +1,5 @@
 import hashlib
 import requests
-import os
 
 def sha256_file(file_path):
     sha256_hash = hashlib.sha256()
