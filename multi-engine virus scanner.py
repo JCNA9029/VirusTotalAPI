@@ -1,6 +1,23 @@
 import hashlib
 import requests
+import pickle
+import numpy as np
+from pathlib import Path
 
+extension_map = {
+    'exe': 1,
+    '2exe': 2,
+    'dll': 3
+ }  
+def map_extension_to_number(parameter):
+    return extension_map.get(parameter, -1)   
+         
+def prediction(numeric_value_reshaped):
+    with open(r"C:\Users\koala\Desktop\antivirus6", 'rb') as file:
+        clf = pickle.load(file)
+        pred = clf.predict(numeric_value_reshaped)
+        print(pred)
+        
 def sha256_file(file_path):
     sha256_hash = hashlib.sha256()
     with open(file_path, "rb") as f:
@@ -8,6 +25,7 @@ def sha256_file(file_path):
         for byte_block in iter(lambda: f.read(4096), b""):
             sha256_hash.update(byte_block)
     return sha256_hash.hexdigest()
+
 
 def antivirus():
     file_path = input("Drag the file you want to scan:")
@@ -34,7 +52,6 @@ def antivirus():
 
         # Extract values with defaults
         analysis_id = json_response.get('data', {}).get('id', 'Not Available')
-        scan_date = attributes.get('date', 'Not Available')
         scan_results = attributes.get('last_analysis_results', {})
         malicious = stats.get('malicious', 0)
         harmless = stats.get('harmless', 0)
@@ -51,7 +68,6 @@ def antivirus():
 
 
         print(f"\nAnalysis ID: {analysis_id}")
-        print(f"Scan Date: {scan_date}")
         print(f"Total Scan Engines: {total_engines}")
         print(f"Malicious Detections: {malicious}")
         print(f"Harmless Results: {harmless}")
@@ -69,9 +85,15 @@ def antivirus():
         print("\nItem commonly known as: ")
         for name in names:
             print(name)
-
     else:
-        print(f"Error: {response.status_code} - {response.text}")
+        print(f"Error: {response.status_code} - {response.text} \n The file is not yet on the database. Please try again after a few minutes \n Scanning using Machine Learning.")
+        parameter = Path(file_path).suffix[1:]
+        numeric_value = map_extension_to_number(parameter)
+        if parameter not in extension_map:
+            print(f"Unknown file extension: {parameter}")
+            return -1
+        numeric_value_reshaped = np.array([[numeric_value]])
+        prediction(numeric_value_reshaped)
         
 antivirus()
 
@@ -85,4 +107,4 @@ while True:
         break
     else: 
         print("Invalid Answer")
-        break
+        answer
